@@ -1,0 +1,3 @@
+[MESSAGES CONTROL]
+disable = bad-continuation, line-too-long, missing-docstring, multiple-imports, too-many-arguments, wrong-import-order
+good-names=vm
