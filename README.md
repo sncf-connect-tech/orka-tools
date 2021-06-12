@@ -4,6 +4,12 @@
 
 Orka documentation: https://orkadocs.macstadium.com/docs
 
+## Scripts
+
+* `audit_vms.py`: look for "suspicious" VMs that have been running for several hours on an Orka cluster
+* `dump_logs.py` & `logs_stats.py`: retrieve & analyse Orka cluster logs
+* `orka.py`: an alternate implementation of the Orka CLI that better suits our needs
+
 ## Installation
 
     pip install -r requirements.txt
