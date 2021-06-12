@@ -8,10 +8,13 @@ https://orkadocs.macstadium.com/docs/quick-start
 It alleviates the following limitations of the official Orka CLI:
 * the official Orka CLI always return a ZERO error code;
   this CLI return a non-ZERO error code in case of failure.
-* a large majority of the official Orka CLI require a TTY to be used correctly,  making it difficult to use in scripts; this CLI does not require a TTY.
-* the official Orka CLI produces ASCII coloring control sequences,  making its output difficult to parse; this CLI only produces plain text.
+* a large majority of the official Orka CLI require a TTY to be used correctly,
+  making it difficult to use in scripts; this CLI does not require a TTY.
+* the official Orka CLI produces ASCII coloring control sequences,
+  making its output difficult to parse; this CLI only produces plain text.
 
-All the sub-commands of this CLI are similar to the ones of the official Orka CLI.However, this CLi it does not implement ALL sub-commands of the official Orka CLI so far,
+All the sub-commands of this CLI are similar to the ones of the official Orka CLI.
+However, this CLI it does not implement ALL sub-commands of the official Orka CLI so far,
 as we only required a subset of them in our Ansible playbook.
 '''
 
