@@ -32,19 +32,20 @@ def main(argv):
             for status in vm['status']:
                 print(f'{status["virtual_machine_id"]} │ {status["node_location"]} │ {status["virtual_machine_ip"]} │ cpu={status["cpu"]}/{status["vcpu"]} │ {status["RAM"]} │ {status["vm_status"]} │ {status["creation_timestamp"]} │ {status["base_image"]}')
                 vm_creation_date = datetime.strptime(status['creation_timestamp'], '%Y-%m-%dT%H:%M:%SZ')
+                vm_uptime_in_days = (present - vm_creation_date).days
                 vm_uptime_in_hours = (present - vm_creation_date).seconds/3600
                 if args.list_running_for_hours and vm_uptime_in_hours >= args.list_running_for_hours:
-                    ghost_vms_ids.append((status['virtual_machine_id'], vm_uptime_in_hours))
+                    ghost_vms_ids.append((status['virtual_machine_id'], vm_uptime_in_days, vm_uptime_in_hours))
         print()
         if ghost_vms_ids:
             print(f'"ghost" VMs detected, running for at least {args.list_running_for_hours} hours:')
-            print('\n'.join('{} - uptime: {:.1f}h'.format(vm_id, uptime_in_hours) for vm_id, uptime_in_hours in ghost_vms_ids))
+            print('\n'.join('{} - uptime: {}d and {:.1f}h'.format(vm_id, uptime_in_days, uptime_in_hours) for vm_id, uptime_in_days, uptime_in_hours in ghost_vms_ids))
             if args.delete_ghost_vms:
                 print('You are about to delete all those VMs.')
                 if not ask_for_confirmation():
                     print('Aborting')
                     return
-                for ghost_vm_id, _ in ghost_vms_ids:
+                for ghost_vm_id, _, _ in ghost_vms_ids:
                     print('Deleting:', ghost_vm_id)
                     resp = check_http_status(session.delete('/resources/vm/delete',
                                              json={"orka_vm_name": ghost_vm_id}))
