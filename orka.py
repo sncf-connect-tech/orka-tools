@@ -18,10 +18,8 @@ as we only required a subset of them in our Ansible playbook.
 # USAGE: ./orka.py --help
 # Orka API reference: https://documenter.getpostman.com/view/6574930/S1ETRGzt
 
-import argparse, json, os, sys
-from getpass import getpass
+import argparse, json, sys
 
-sys.path.append(os.path.dirname(__file__))
 from commons import add_common_opts_and_parse_args, check_http_status, orka_session, ArgparseHelpFormatter
 
 
