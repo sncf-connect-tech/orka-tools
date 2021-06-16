@@ -64,7 +64,7 @@ def main(argv=None):
 
 def parse_args(argv=None):
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-                                     description=sys.modules[__name__].__doc__, allow_abbrev=False)
+                                     description=__doc__, allow_abbrev=False)
     parser.add_argument('--for-vm', help='Display all logs matching this VM name & exit')
     parser.add_argument('--logs-filename', default='logs.json', help=' ')
     parser.add_argument('--since', help='Date must be specified with this format: YYYY-MM-DD')

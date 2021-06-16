@@ -124,9 +124,23 @@ def image_save(args, session):
     print(json.dumps(resp.json(), indent=4))
 
 
+def node_list(_, session):
+    resp = check_http_status(session.get('/resources/node/list'))
+    nodes = resp.json()["nodes"]
+    if nodes:
+        print("   Node    │      IP       │  CPU  │ Memory │ State")
+    for node in nodes:
+        print(f"{node['name']:<10} | {node['address']} │ {node['available_cpu']:>2}/{node['allocatable_cpu']} | {node['available_memory']:<6} | {node['state']}")
+
+
+def node_status(args, session):
+    resp = check_http_status(session.get(f'/resources/node/status/{args.node}'))
+    print(json.dumps(resp.json(), indent=4))
+
+
 def parse_args(argv=None):
     parser = argparse.ArgumentParser(formatter_class=ArgparseHelpFormatter,
-                                     description=sys.modules[__name__].__doc__, allow_abbrev=False)
+                                     description=__doc__, allow_abbrev=False)
     parser.add_argument('--retries', type=int, default=3, help='Max HTTP retries')
     parser.add_argument('--backoff-factor', type=float, default=.3, help='Backup factor for HTTP retries')
     subparsers = parser.add_subparsers(required=True)
@@ -172,6 +186,14 @@ def parse_args(argv=None):
     img_save_cmd.set_defaults(func=image_save)
     img_save_cmd.add_argument('--vm', '-v', required=True)
     img_save_cmd.add_argument('--new-base-image-name', '-b', required=True)
+
+    node_cmd = subparsers.add_parser('node')
+    node_subparsers = node_cmd.add_subparsers(dest='node', required=True)
+    node_list_cmd = node_subparsers.add_parser('list')
+    node_list_cmd.set_defaults(func=node_list)
+    node_status_cmd = node_subparsers.add_parser('status')
+    node_status_cmd.set_defaults(func=node_status)
+    node_status_cmd.add_argument('--node', '-n', required=True)
 
     return add_common_opts_and_parse_args(parser, argv)
 

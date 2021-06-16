@@ -24,7 +24,7 @@ def main(argv):
 
 def parse_args(argv=None):
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-                                     description=sys.modules[__name__].__doc__, allow_abbrev=False)
+                                     description=__doc__, allow_abbrev=False)
     parser.add_argument('--out-file', default='logs.json', help=' ')
     return add_common_opts_and_parse_args(parser, argv)
 

@@ -67,7 +67,7 @@ def ask_for_confirmation():
 
 def parse_args(argv=None):
     parser = argparse.ArgumentParser(formatter_class=ArgparseHelpFormatter,
-                                     description=sys.modules[__name__].__doc__, allow_abbrev=False)
+                                     description=__doc__, allow_abbrev=False)
     parser.add_argument('--list-running-for-hours', type=float, help='List VMs running for at least X hours')
     parser.add_argument('--delete-ghost-vms', action='store_true', help='Require --list-running-for-hours')
     args = add_common_opts_and_parse_args(parser, argv)
