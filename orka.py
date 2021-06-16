@@ -139,6 +139,7 @@ def node_status(args, session):
 
 
 def parse_args(argv=None):
+    # pylint: disable=too-many-statements
     parser = argparse.ArgumentParser(formatter_class=ArgparseHelpFormatter,
                                      description=__doc__, allow_abbrev=False)
     parser.add_argument('--retries', type=int, default=3, help='Max HTTP retries')
