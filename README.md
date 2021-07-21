@@ -1,6 +1,6 @@
 # orka-tools
 
-[![build status](https://github.com/voyages-sncf-technologies/orka-tools/workflows/build/badge.svg)](https://github.com/voyages-sncf-technologies/orka-tools/actions?query=branch%3Amaster)
+[![build status](https://github.com/voyages-sncf-technologies/orka-tools/workflows/build/badge.svg)](https://github.com/voyages-sncf-technologies/orka-tools/actions?query=branch%3Amain)
 
 Orka documentation: https://orkadocs.macstadium.com/docs
 
