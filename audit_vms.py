@@ -26,16 +26,18 @@ def main(argv):
     with orka_session(**vars(args)) as session:
         resp = check_http_status(session.get('/resources/vm/list/all'))
         for vm in resp.json()['virtual_machine_resources']:
-            print(vm["virtual_machine_name"], ':', vm['vm_deployment_status'])
             if vm['vm_deployment_status'] == 'Not Deployed':
+                print(vm["virtual_machine_name"].ljust(22), ':', vm['vm_deployment_status'].ljust(14), " | owner : ", vm['owner'])
                 continue
+            print(vm["virtual_machine_name"].ljust(22), ':', vm['vm_deployment_status'].ljust(14), " | owner : ", vm['status'][0]['owner'])
             for status in vm['status']:
-                print(f'{status["virtual_machine_id"]} │ {status["node_location"]} │ {status["virtual_machine_ip"]} │ cpu={status["cpu"]}/{status["vcpu"]} │ {status["RAM"]} │ {status["vm_status"]} │ {status["creation_timestamp"]} │ {status["base_image"]}')
+                print(f'\t{status["virtual_machine_id"]} │ {status["node_location"]} │ {status["virtual_machine_ip"]} │ cpu={status["cpu"]}/{status["vcpu"]} │ {status["RAM"]} │ {status["vm_status"]} │ {status["creation_timestamp"]} │ {status["base_image"]}')
                 vm_creation_date = datetime.strptime(status['creation_timestamp'], '%Y-%m-%dT%H:%M:%SZ')
                 vm_uptime_in_days = (present - vm_creation_date).days
                 vm_uptime_in_hours = (present - vm_creation_date).seconds/3600
                 if args.list_running_for_hours and vm_uptime_in_hours >= args.list_running_for_hours:
                     ghost_vms_ids.append((status['virtual_machine_id'], vm_uptime_in_days, vm_uptime_in_hours))
+            print()
         print()
         if ghost_vms_ids:
             print(f'"ghost" VMs detected, running for at least {args.list_running_for_hours} hours:')
