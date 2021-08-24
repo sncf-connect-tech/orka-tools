@@ -18,7 +18,7 @@ def main(argv):
     args = parse_args(argv)
     with orka_session(**vars(args)) as session:
         resp = check_http_status(session.post('/logs/query'))
-        with open(args.out_file, 'w') as logs_file:
+        with open(args.out_file, 'w', encoding='utf-8') as logs_file:
             json.dump(resp.json(), logs_file, indent=4)
 
 
