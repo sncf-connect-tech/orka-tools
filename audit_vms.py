@@ -11,7 +11,7 @@ Additionally, it can delete those "ghost" VMs.
 # USAGE example: ./audit_vms.py --list-running-for-hours 6
 # Orka API reference: https://documenter.getpostman.com/view/6574930/S1ETRGzt
 
-import argparse, sys
+import argparse, math, sys
 from datetime import datetime
 
 from commons import add_common_opts_and_parse_args, check_http_status, orka_session, ArgparseHelpFormatter
@@ -34,8 +34,9 @@ def main(argv):
                 print(f'\t{status["virtual_machine_id"]} │ {status["node_location"]} │ {status["virtual_machine_ip"]} │ cpu={status["cpu"]}/{status["vcpu"]} │ {status["RAM"]} │ {status["vm_status"]} │ {status["creation_timestamp"]} │ {status["base_image"]}')
                 vm_creation_date = datetime.strptime(status['creation_timestamp'], '%Y-%m-%dT%H:%M:%SZ')
                 vm_uptime_in_days = (present - vm_creation_date).days
-                vm_uptime_in_hours = (present - vm_creation_date).seconds/3600
-                if args.list_running_for_hours and vm_uptime_in_hours >= args.list_running_for_hours:
+                vm_uptime_in_hours = math.floor((present - vm_creation_date).seconds / 3600)
+                vm_total_uptime_in_hours = (vm_uptime_in_days*24)+vm_uptime_in_hours
+                if args.list_running_for_hours and vm_total_uptime_in_hours >= args.list_running_for_hours:
                     ghost_vms_ids.append((status['virtual_machine_id'], vm_uptime_in_days, vm_uptime_in_hours))
             print()
         print()
