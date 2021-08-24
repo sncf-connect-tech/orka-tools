@@ -31,7 +31,7 @@ TARGET_MESSAGES = (
 def main(argv=None):
     args = parse_args(argv)
 
-    with open(args.logs_filename) as logs_file:
+    with open(args.logs_filename, encoding='utf-8') as logs_file:
         logs = json.load(logs_file)['logs']
     print('#logs:', len(logs))
 
