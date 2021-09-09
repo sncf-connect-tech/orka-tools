@@ -22,6 +22,7 @@ as we only required a subset of them in our Ansible playbook.
 # Orka API reference: https://documenter.getpostman.com/view/6574930/S1ETRGzt
 
 import argparse, json, sys
+from getpass import getpass
 
 from commons import add_common_opts_and_parse_args, check_http_status, orka_session, ArgparseHelpFormatter
 
@@ -138,6 +139,26 @@ def node_status(args, session):
     print(json.dumps(resp.json(), indent=4))
 
 
+def user_list(_, session):
+    resp = check_http_status(session.get('/users'))
+    for group, users in resp.json()["user_groups"].items():
+        print(group)
+        for user in users:
+            print(f'  {user}')
+
+def user_create(args, session):
+    print('Password: ', end='')
+    payload = {"email": args.email, "password": getpass()}
+    if args.group:
+        payload['group'] = args.group
+    resp = check_http_status(session.post('/users/', headers={'orka-licensekey': args.license_key}, json=payload))
+    print(json.dumps(resp.json(), indent=4))
+
+def user_delete(args, session):
+    resp = check_http_status(session.delete(f'/users/{args.email}', headers={'orka-licensekey': args.license_key}))
+    print(json.dumps(resp.json(), indent=4))
+
+
 def parse_args(argv=None):
     # pylint: disable=too-many-statements
     parser = argparse.ArgumentParser(formatter_class=ArgparseHelpFormatter,
@@ -195,6 +216,20 @@ def parse_args(argv=None):
     node_status_cmd = node_subparsers.add_parser('status')
     node_status_cmd.set_defaults(func=node_status)
     node_status_cmd.add_argument('--node', '-n', required=True)
+
+    user_cmd = subparsers.add_parser('user')
+    user_subparsers = user_cmd.add_subparsers(dest='user', required=True)
+    user_list_cmd = user_subparsers.add_parser('list')
+    user_list_cmd.set_defaults(func=user_list)
+    user_create_cmd = user_subparsers.add_parser('create')
+    user_create_cmd.add_argument('-l', dest='license_key', required=True)
+    user_create_cmd.add_argument('-e', dest='email', required=True)
+    user_create_cmd.add_argument('-g', dest='group')
+    user_create_cmd.set_defaults(func=user_create)
+    user_delete_cmd = user_subparsers.add_parser('delete')
+    user_delete_cmd.add_argument('-l', dest='license_key', required=True)
+    user_delete_cmd.add_argument('-e', dest='email', required=True)
+    user_delete_cmd.set_defaults(func=user_delete)
 
     return add_common_opts_and_parse_args(parser, argv)
 

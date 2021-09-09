@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/),
 and [PEP 440](https://www.python.org/dev/peps/pep-0440/).
 
 
+## [?] - not released yet
+### Added
+- `user list`, `user create` & `user delete` commands
+
 ## [1.0.1] - 2021-06-16
 ### Added
 * `node list` & `node status` commands
