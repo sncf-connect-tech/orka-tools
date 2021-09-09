@@ -50,7 +50,6 @@ def vm_list(_, session):
     for vm in not_deployed_vms:
         print(f"{vm['virtual_machine_name']:<19} | {vm['owner']:<17} | {vm['cpu']}/{vm['vcpu']}      | {vm['base_image']}")
 
-
 def vm_status(args, session):
     resp = check_http_status(session.get(f'/resources/vm/status/{args.vm}'))
     vms = resp.json()["virtual_machine_resources"]
@@ -65,7 +64,6 @@ def vm_status(args, session):
     else:
         print(json.dumps(vms, indent=4))
 
-
 def vm_create_config(args, session):
     resp = check_http_status(session.post('/resources/vm/create',
                                           json={
@@ -77,29 +75,24 @@ def vm_create_config(args, session):
                                           }))
     print(json.dumps(resp.json(), indent=4))
 
-
 def vm_deploy(args, session):
     resp = check_http_status(session.post('/resources/vm/deploy',
                                           json={"orka_vm_name": args.vm}))
     print(json.dumps(resp.json(), indent=4))
 
-
 def vm_create(args, session):
     vm_create_config(args, session)
     vm_deploy(args, session)
-
 
 def vm_suspend(args, session):
     resp = check_http_status(session.post('/resources/vm/exec/suspend',
                                           json={"orka_vm_name": args.vm}))
     print(json.dumps(resp.json(), indent=4))
 
-
 def vm_delete(args, session):
     resp = check_http_status(session.delete('/resources/vm/delete',
                                             json={"orka_vm_name": args.vm}))
     print(json.dumps(resp.json(), indent=4))
-
 
 def vm_purge(args, session):
     resp = check_http_status(session.delete('/resources/vm/purge',
@@ -115,13 +108,16 @@ def image_list(_, session):
     for img in images:
         print(f"{img['image']:<30} | {img['image_size']:<3}        │ {img['modified']:<24} | {img['date_added']:<24} | {img['owner']}")
 
-
 def image_save(args, session):
     resp = check_http_status(session.post('/resources/image/save',
                                           json={
                                             "orka_vm_name": args.vm,
                                             "new_name": args.new_base_image_name
                                           }))
+    print(json.dumps(resp.json(), indent=4))
+
+def image_delete(args, session):
+    resp = check_http_status(session.post('/resources/image/delete', json={"image": args.image}))
     print(json.dumps(resp.json(), indent=4))
 
 
@@ -132,7 +128,6 @@ def node_list(_, session):
         print("   Node    │      IP       │  CPU  │ Memory │ State")
     for node in nodes:
         print(f"{node['name']:<10} | {node['address']} │ {node['available_cpu']:>2}/{node['allocatable_cpu']} | {node['available_memory']:<6} | {node['state']}")
-
 
 def node_status(args, session):
     resp = check_http_status(session.get(f'/resources/node/status/{args.node}'))
@@ -151,11 +146,11 @@ def user_create(args, session):
     payload = {"email": args.email, "password": getpass()}
     if args.group:
         payload['group'] = args.group
-    resp = check_http_status(session.post('/users/', headers={'orka-licensekey': args.license_key}, json=payload))
+    resp = check_http_status(session.post('/users/', json=payload))
     print(json.dumps(resp.json(), indent=4))
 
 def user_delete(args, session):
-    resp = check_http_status(session.delete(f'/users/{args.email}', headers={'orka-licensekey': args.license_key}))
+    resp = check_http_status(session.delete(f'/users/{args.email}'))
     print(json.dumps(resp.json(), indent=4))
 
 
@@ -208,6 +203,9 @@ def parse_args(argv=None):
     img_save_cmd.set_defaults(func=image_save)
     img_save_cmd.add_argument('--vm', '-v', required=True)
     img_save_cmd.add_argument('--new-base-image-name', '-b', required=True)
+    img_delete_cmd = img_subparsers.add_parser('delete')
+    img_delete_cmd.set_defaults(func=image_delete)
+    img_delete_cmd.add_argument('-i', '--image', required=True)
 
     node_cmd = subparsers.add_parser('node')
     node_subparsers = node_cmd.add_subparsers(dest='node', required=True)
@@ -222,12 +220,10 @@ def parse_args(argv=None):
     user_list_cmd = user_subparsers.add_parser('list')
     user_list_cmd.set_defaults(func=user_list)
     user_create_cmd = user_subparsers.add_parser('create')
-    user_create_cmd.add_argument('-l', dest='license_key', required=True)
     user_create_cmd.add_argument('-e', dest='email', required=True)
     user_create_cmd.add_argument('-g', dest='group')
     user_create_cmd.set_defaults(func=user_create)
     user_delete_cmd = user_subparsers.add_parser('delete')
-    user_delete_cmd.add_argument('-l', dest='license_key', required=True)
     user_delete_cmd.add_argument('-e', dest='email', required=True)
     user_delete_cmd.set_defaults(func=user_delete)
 
