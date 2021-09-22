@@ -56,13 +56,22 @@ def vm_status(args, session):
     if not vms:
         print("No VMs found matching this name")
         sys.exit(1)
-    if args.id_only:
-        if "status" not in vms[0]:
-            raise RuntimeError(f"VM {args.vm} not deployed")
-        status = vms[0]["status"][0]
+    print(json.dumps(vms, indent=4))
+
+def vm_get(args, session):
+    resp = check_http_status(session.get(f'/resources/vm/status/{args.vm}'))
+    vms = resp.json()["virtual_machine_resources"]
+    if not vms:
+        print("No VMs found matching this name")
+        sys.exit(1)
+    vm = vms[0]
+    if "status" not in vm:
+        raise RuntimeError(f"VM {args.vm} not deployed")
+    status = vm["status"][0]
+    if args.field == "id":
         print(status["virtual_machine_id"])
-    else:
-        print(json.dumps(vms, indent=4))
+    elif args.field == "ssh_args":
+        print(status["virtual_machine_ip"] + " -p " + status["ssh_port"])
 
 def vm_create_config(args, session):
     resp = check_http_status(session.post('/resources/vm/create',
@@ -169,7 +178,10 @@ def parse_args(argv=None):
     vm_status_cmd = vm_subparsers.add_parser('status')
     vm_status_cmd.set_defaults(func=vm_status)
     vm_status_cmd.add_argument('--vm', '-v', required=True)
-    vm_status_cmd.add_argument('--id-only', action='store_true')
+    vm_get_cmd = vm_subparsers.add_parser('get')
+    vm_get_cmd.set_defaults(func=vm_get)
+    vm_get_cmd.add_argument('field', choices=('id', 'ssh_args'))
+    vm_get_cmd.add_argument('--vm', '-v', required=True)
     vm_create_config_cmd = vm_subparsers.add_parser('create-config')
     vm_create_config_cmd.set_defaults(func=vm_create_config)
     vm_create_config_cmd.add_argument('--vm', '-v', required=True)

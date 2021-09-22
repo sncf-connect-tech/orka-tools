@@ -24,3 +24,11 @@ First, you need to define some environment variables:
     export ORKA_PASSWORD=
 
 You can pass `--help` to any of the scripts to get a detailed description of the arguments & sub-commands it supports.
+
+For example, to quickly connect to a VM through SSH:
+
+    ssh $SSH_USER@$(./orka.py vm get ssh_args --vm $VM_NAME)
+
+Or:
+
+    sshpass -p $SSH_PASSWORD ssh $SSH_USER@$(./orka.py vm get ssh_args --vm $VM_NAME)

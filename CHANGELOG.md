@@ -12,6 +12,9 @@ and [PEP 440](https://www.python.org/dev/peps/pep-0440/).
 ### Added
 - `user list`, `user create` & `user delete` commands
 - `image delete` command
+- `vm get` command
+### Removed
+- `vm status --vm-only --vm $vm` that became `vm get id --vm $vm`
 
 ## [1.0.1] - 2021-06-16
 ### Added
