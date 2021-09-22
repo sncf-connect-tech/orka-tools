@@ -125,6 +125,14 @@ def image_save(args, session):
                                           }))
     print(json.dumps(resp.json(), indent=4))
 
+def image_rename(args, session):
+    resp = check_http_status(session.post('/resources/image/rename',
+                                          json={
+                                            "image": args.image,
+                                            "new_name": args.o
+                                          }))
+    print(json.dumps(resp.json(), indent=4))
+
 def image_delete(args, session):
     resp = check_http_status(session.post('/resources/image/delete', json={"image": args.image}))
     print(json.dumps(resp.json(), indent=4))
@@ -218,6 +226,10 @@ def parse_args(argv=None):
     img_delete_cmd = img_subparsers.add_parser('delete')
     img_delete_cmd.set_defaults(func=image_delete)
     img_delete_cmd.add_argument('-i', '--image', required=True)
+    img_rename_cmd = img_subparsers.add_parser('rename')
+    img_rename_cmd.set_defaults(func=image_rename)
+    img_rename_cmd.add_argument('-i', '--image', required=True)
+    img_rename_cmd.add_argument('-o', required=True)
 
     node_cmd = subparsers.add_parser('node')
     node_subparsers = node_cmd.add_subparsers(dest='node', required=True)
