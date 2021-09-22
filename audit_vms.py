@@ -42,7 +42,7 @@ def main(argv):
         print()
         if ghost_vms_ids:
             print(f'"ghost" VMs detected, running for at least {args.list_running_for_hours} hours:')
-            print('\n'.join('{} - uptime: {}d and {:.1f}h'.format(vm_id, uptime_in_days, uptime_in_hours) for vm_id, uptime_in_days, uptime_in_hours in ghost_vms_ids))
+            print('\n'.join(f'{vm_id} - uptime: {uptime_in_days}d and {uptime_in_hours:.1f}h' for vm_id, uptime_in_days, uptime_in_hours in ghost_vms_ids))
             if args.delete_ghost_vms:
                 print('You are about to delete all those VMs.')
                 if not ask_for_confirmation():
