@@ -64,6 +64,9 @@ def vm_get(args, session):
     if not vms:
         print("No VMs found matching this name")
         sys.exit(1)
+    if len(vms) > 1:
+        print("Several VMs match this name")
+        sys.exit(1)
     vm = vms[0]
     if "status" not in vm:
         raise RuntimeError(f"VM {args.vm} not deployed")
@@ -120,9 +123,14 @@ def image_list(_, session):
 def image_save(args, session):
     resp = check_http_status(session.post('/resources/image/save',
                                           json={
-                                            "orka_vm_name": args.vm,
+                                            "orka_vm_name": args.vm_id,
                                             "new_name": args.new_base_image_name
                                           }))
+    print(json.dumps(resp.json(), indent=4))
+
+def image_commit(args, session):
+    resp = check_http_status(session.post('/resources/image/commit',
+                                          json={"orka_vm_name": args.vm_id}))
     print(json.dumps(resp.json(), indent=4))
 
 def image_rename(args, session):
@@ -221,11 +229,14 @@ def parse_args(argv=None):
     img_list_cmd.set_defaults(func=image_list)
     img_save_cmd = img_subparsers.add_parser('save')
     img_save_cmd.set_defaults(func=image_save)
-    img_save_cmd.add_argument('--vm', '-v', required=True)
+    img_save_cmd.add_argument('--vm-id', '--vm', '-v', required=True)
     img_save_cmd.add_argument('--new-base-image-name', '-b', required=True)
     img_delete_cmd = img_subparsers.add_parser('delete')
     img_delete_cmd.set_defaults(func=image_delete)
     img_delete_cmd.add_argument('-i', '--image', required=True)
+    img_commit_cmd = img_subparsers.add_parser('commit')
+    img_commit_cmd.set_defaults(func=image_commit)
+    img_commit_cmd.add_argument('--vm-id', '--vm', '-v', required=True)
     img_rename_cmd = img_subparsers.add_parser('rename')
     img_rename_cmd.set_defaults(func=image_rename)
     img_rename_cmd.add_argument('-i', '--image', required=True)
