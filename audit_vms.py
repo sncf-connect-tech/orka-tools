@@ -45,7 +45,7 @@ def main(argv):
             print('\n'.join('{} - uptime: {}d and {:.1f}h'.format(vm_id, uptime_in_days, uptime_in_hours) for vm_id, uptime_in_days, uptime_in_hours in ghost_vms_ids))
             if args.delete_ghost_vms:
                 print('You are about to delete all those VMs.')
-                if not ask_for_confirmation():
+                if not ask_for_confirmation(args.force_delete):
                     print('Aborting')
                     return
                 for ghost_vm_id, _, _ in ghost_vms_ids:
@@ -57,8 +57,8 @@ def main(argv):
                 sys.exit(2)
 
 
-def ask_for_confirmation():
-    if args.force_delete:
+def ask_for_confirmation(enforce):
+    if enforce:
         return True
     print('Please confirm (y/n): ', end='')
     while True:
