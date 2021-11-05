@@ -58,6 +58,8 @@ def main(argv):
 
 
 def ask_for_confirmation():
+    if args.force_delete:
+        return True
     print('Please confirm (y/n): ', end='')
     while True:
         choice = input().lower()
@@ -73,6 +75,7 @@ def parse_args(argv=None):
                                      description=__doc__, allow_abbrev=False)
     parser.add_argument('--list-running-for-hours', type=float, help='List VMs running for at least X hours')
     parser.add_argument('--delete-ghost-vms', action='store_true', help='Require --list-running-for-hours')
+    parser.add_argument('--force-delete', default=False, action='store_true', help='For bypass interactive confirmation')
     args = add_common_opts_and_parse_args(parser, argv)
     if args.delete_ghost_vms and not args.list_running_for_hours:
         parser.error('--delete-ghost-vms require --list-running-for-hours')
