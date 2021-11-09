@@ -45,7 +45,7 @@ def main(argv):
             print('\n'.join('{} - uptime: {}d and {:.1f}h'.format(vm_id, uptime_in_days, uptime_in_hours) for vm_id, uptime_in_days, uptime_in_hours in ghost_vms_ids))
             if args.delete_ghost_vms:
                 print('You are about to delete all those VMs.')
-                if not ask_for_confirmation(args.force_delete):
+                if not (args.force_delete or ask_for_confirmation()):
                     print('Aborting')
                     return
                 for ghost_vm_id, _, _ in ghost_vms_ids:
@@ -57,9 +57,7 @@ def main(argv):
                 sys.exit(2)
 
 
-def ask_for_confirmation(enforce):
-    if enforce:
-        return True
+def ask_for_confirmation():
     print('Please confirm (y/n): ', end='')
     while True:
         choice = input().lower()
@@ -75,7 +73,7 @@ def parse_args(argv=None):
                                      description=__doc__, allow_abbrev=False)
     parser.add_argument('--list-running-for-hours', type=float, help='List VMs running for at least X hours')
     parser.add_argument('--delete-ghost-vms', action='store_true', help='Require --list-running-for-hours')
-    parser.add_argument('--force-delete', default=False, action='store_true', help='For bypass interactive confirmation')
+    parser.add_argument('--force-delete', default=False, action='store_true', help='Bypass interactive confirmation')
     args = add_common_opts_and_parse_args(parser, argv)
     if args.delete_ghost_vms and not args.list_running_for_hours:
         parser.error('--delete-ghost-vms require --list-running-for-hours')
