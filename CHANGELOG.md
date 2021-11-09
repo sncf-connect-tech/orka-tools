@@ -13,6 +13,7 @@ and [PEP 440](https://www.python.org/dev/peps/pep-0440/).
 - `user list`, `user create` & `user delete` commands in `orka.py`
 - `image delete`, `image commit` & `image rename` commands in `orka.py`
 - `vm get` command in `orka.py`
+- new boolean argument `--force-delete` in `audit_vms.py`
 ### Removed
 - `vm status --vm-only --vm $vm` that became `vm get id --vm $vm` in `orka.py`
 
