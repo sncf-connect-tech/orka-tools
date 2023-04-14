@@ -1,3 +1,3 @@
 [MESSAGES CONTROL]
-disable = bad-continuation, line-too-long, missing-docstring, missing-final-newline, multiple-imports, too-many-arguments, too-many-locals, wrong-import-order
+disable = line-too-long, missing-docstring, missing-final-newline, multiple-imports, too-many-arguments, too-many-locals, wrong-import-order
 good-names=vm
