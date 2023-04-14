@@ -30,8 +30,8 @@ def main(argv):
                 print(vm["virtual_machine_name"].ljust(22), ':', vm['vm_deployment_status'].ljust(14), " | owner : ", vm['owner'])
                 continue
             print(vm["virtual_machine_name"].ljust(22), ':', vm['vm_deployment_status'].ljust(14), " | owner : ", vm['status'][0]['owner'])
-            for status in vm['status']:
-                print(f'\t{status["virtual_machine_id"]} │ {status["node_location"]} │ {status["virtual_machine_ip"]} │ cpu={status["cpu"]}/{status["vcpu"]} │ {status["RAM"]} │ {status["vm_status"]} │ {status["creation_timestamp"]} │ {status["base_image"]}')
+            for cpt, status in enumerate (vm['status']):
+                print(f'\t {cpt+1} | {status["virtual_machine_id"]} │ {status["node_location"]} │ {status["virtual_machine_ip"]} │ cpu={status["cpu"]}/{status["vcpu"]} │ {status["RAM"]} │ {status["vm_status"]} │ {status["creation_timestamp"]} │ {status["base_image"]}')
                 vm_creation_date = datetime.strptime(status['creation_timestamp'], '%Y-%m-%dT%H:%M:%SZ')
                 vm_uptime_in_days = (present - vm_creation_date).days
                 vm_uptime_in_hours = math.floor((present - vm_creation_date).seconds / 3600)
