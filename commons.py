@@ -27,13 +27,24 @@ def orka_session(orka_controller, user_email, password, license_key, retries=3, 
         'email': user_email,
         'password': password,
     }))
+    # print('Token 1 : ' + resp.json()['token'])
+    # session.headers.update({
+    #     'User-Agent': "UA test token",
+    # })
+    # resp = check_http_status(session.post('/token', data={
+    #     'email': user_email,
+    #     'password': password,
+    # }))
+    # print('Token 2 : ' + resp.json()['token'])
     session.headers.update({
         'Authorization': 'Bearer ' + resp.json()['token'],
         'orka-licensekey': license_key,
         'User-Agent': USER_AGENT,
     })
+    # resp = check_http_status(session.get('/token'))
+    # print('Token Get : ' + resp.text)
     yield session
-    check_http_status(session.delete('/token'))
+    #check_http_status(session.delete('/token'))
 
 
 def check_http_status(response):
