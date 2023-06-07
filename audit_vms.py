@@ -11,7 +11,7 @@ Additionally, it can delete those "ghost" VMs.
 # USAGE example: ./audit_vms.py --list-running-for-hours 6
 # Orka API reference: https://documenter.getpostman.com/view/6574930/S1ETRGzt
 
-import argparse, math, sys
+import argparse, math, sys, re
 from datetime import datetime
 
 from commons import add_common_opts_and_parse_args, check_http_status, orka_session, ArgparseHelpFormatter
@@ -31,7 +31,12 @@ def main(argv):
                 continue
             print(vm["virtual_machine_name"].ljust(22), ':', vm['vm_deployment_status'].ljust(14), " | owner : ", vm['status'][0]['owner'])
             for cpt, status in enumerate (vm['status']):
-                print(f'\t {cpt+1} | {status["virtual_machine_id"]} │ {status["node_location"]} │ {status["virtual_machine_ip"]} │ cpu={status["cpu"]}/{status["vcpu"]} │ {status["RAM"]} │ {status["vm_status"]} │ {status["creation_timestamp"]} │ {status["base_image"]}')
+                # For better alignment
+                node_number = re.sub('(?:x86-)?(macpro-)(.*)', '\\2', status["node_location"])
+                nodename = re.sub('(?:x86-)?(macpro-)(.*)', '\\1', status["node_location"]) + node_number.zfill(2)
+                cpt = str(cpt+1).zfill(2)
+                # Display usefull information
+                print(f'\t {cpt} | {status["virtual_machine_id"]} │ {nodename} | {status["virtual_machine_ip"]} │ cpu={status["cpu"]}/{status["vcpu"]} │ {status["RAM"]} │ {status["vm_status"]} │ {status["creation_timestamp"]} │ {status["base_image"]} | {status["tag"]} | {status["tag_required"]}')
                 vm_creation_date = datetime.strptime(status['creation_timestamp'], '%Y-%m-%dT%H:%M:%SZ')
                 vm_uptime_in_days = (present - vm_creation_date).days
                 vm_uptime_in_hours = math.floor((present - vm_creation_date).seconds / 3600)
