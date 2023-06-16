@@ -23,9 +23,11 @@ def main(argv):
     print(" All the times are in UTC timezone")
     print("//-------------------------//")
     present = datetime.utcnow()
+    nb_vm_by_tag = {}
     with orka_session(**vars(args)) as session:
         resp = check_http_status(session.get('/resources/vm/list/all'))
-        for vm in resp.json()['virtual_machine_resources']:
+        # Iterate on each vm sorted by virtual_machine_name
+        for vm in sorted(resp.json()['virtual_machine_resources'], key=lambda vm: vm['virtual_machine_name']):
             if vm['vm_deployment_status'] == 'Not Deployed':
                 print(vm["virtual_machine_name"].ljust(22), ':', vm['vm_deployment_status'].ljust(14), " | owner : ", vm['owner'])
                 continue
@@ -38,7 +40,12 @@ def main(argv):
                 vm_total_uptime_in_hours = (vm_uptime_in_days*24)+vm_uptime_in_hours
                 if args.list_running_for_hours and vm_total_uptime_in_hours >= args.list_running_for_hours:
                     ghost_vms_ids.append((status['virtual_machine_id'], vm_uptime_in_days, vm_uptime_in_hours))
+                nb_vm_by_tag[status["tag"]] = nb_vm_by_tag.get(status["tag"], 0) + 1
             print()
+        print()
+        print("Number of VMs by tag:")
+        for tag, nb_vm in nb_vm_by_tag.items():
+            print(f'    {tag} : {nb_vm}')
         print()
         if ghost_vms_ids:
             print(f'"ghost" VMs detected, running for at least {args.list_running_for_hours} hours:')
