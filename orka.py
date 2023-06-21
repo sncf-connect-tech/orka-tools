@@ -84,6 +84,8 @@ def vm_create_config(args, session):
                                             "orka_image": args.vm,
                                             "orka_cpu_core": args.cpu,
                                             "vcpu_count": args.vcpu,
+                                            "tag": args.tag,
+                                            "tag_required": args.tag_required,
                                           }))
     print(json.dumps(resp.json(), indent=4))
 
@@ -204,6 +206,8 @@ def parse_args(argv=None):
     vm_create_config_cmd.add_argument('--base-image', '-b', required=True)
     vm_create_config_cmd.add_argument('--cpu', '-c', type=int, required=True)
     vm_create_config_cmd.add_argument('--vcpu', '-C', type=int, required=True)
+    vm_create_config_cmd.add_argument('--tag', '-t', required=True)
+    vm_create_config_cmd.add_argument('--tag_required', '-T', action='store_true')
     vm_deploy_cmd = vm_subparsers.add_parser('deploy')
     vm_deploy_cmd.set_defaults(func=vm_deploy)
     vm_deploy_cmd.add_argument('--vm', '-v', required=True)
