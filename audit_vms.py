@@ -34,8 +34,8 @@ def main(argv):
             print(vm["virtual_machine_name"].ljust(22), ':', vm['vm_deployment_status'].ljust(14), " | owner : ", vm['status'][0]['owner'])
             for cpt, status in enumerate (vm['status']):
                 # For better alignment
-                node_number = re.sub('(?:x86-)?(macpro-)(.*)', '\\2', status["node_location"])
-                nodename = re.sub('(?:x86-)?(macpro-)(.*)', '\\1', status["node_location"]) + node_number.zfill(2)
+                node_number = re.sub('(?:x86-)?(macpro-|m2-mini-)(.*)', '\\2', status["node_location"])
+                nodename = re.sub('(?:x86-)?(macpro-|m2-mini-)(.*)', '\\1', status["node_location"]) + node_number[-2:].zfill(2)
                 cpt = str(cpt+1).zfill(2)
                 # Display usefull information
                 print(f'\t {cpt} | {status["virtual_machine_id"]} │ {nodename} | {status["virtual_machine_ip"]} │ cpu={status["cpu"]}/{status["vcpu"]} │ {status["RAM"]} │ {status["vm_status"]} │ {status["creation_timestamp"]} │ {status["base_image"]} | {status["tag"]} | {status["tag_required"]}')
