@@ -77,16 +77,24 @@ def vm_get(args, session):
         print(status["virtual_machine_ip"] + " -p " + status["ssh_port"])
 
 def vm_create_config(args, session):
+    if args.tag_required:
+        orka_json={ "orka_base_image": args.base_image,
+                    "orka_vm_name": args.vm,
+                    "orka_image": args.vm,
+                    "orka_cpu_core": args.cpu,
+                    "vcpu_count": args.vcpu,
+                    "tag": args.tag,
+                    "tag_required": args.tag_required,
+                  }
+    else:
+        orka_json={ "orka_base_image": args.base_image,
+                    "orka_vm_name": args.vm,
+                    "orka_image": args.vm,
+                    "orka_cpu_core": args.cpu,
+                    "vcpu_count": args.vcpu,
+                  }
     resp = check_http_status(session.post('/resources/vm/create',
-                                          json={
-                                            "orka_base_image": args.base_image,
-                                            "orka_vm_name": args.vm,
-                                            "orka_image": args.vm,
-                                            "orka_cpu_core": args.cpu,
-                                            "vcpu_count": args.vcpu,
-                                            "tag": args.tag,
-                                            "tag_required": args.tag_required,
-                                          }))
+                                          json=orka_json))
     print(json.dumps(resp.json(), indent=4))
 
 def vm_deploy(args, session):
@@ -95,6 +103,7 @@ def vm_deploy(args, session):
     print(json.dumps(resp.json(), indent=4))
 
 def vm_create(args, session):
+    args.tag_required = False
     vm_create_config(args, session)
     vm_deploy(args, session)
 
